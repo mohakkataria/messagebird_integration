@@ -1,26 +1,18 @@
 package app
 
 import (
-    "net/http"
-    "io"
+/*    "net/http"
+    "io"*/
+    "github.com/julienschmidt/httprouter"
+    "github.com/mohakkataria/messagebird_integration/controllers"
 )
 
-var mux map[string]func(http.ResponseWriter, *http.Request)
+func (app *App) setRoutes() {
 
-func (*myHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-    if h, ok := mux[r.URL.String()]; ok {
-        h(w, r)
-        return
-    }
+    router := httprouter.New()
+    mc := controllers.NewMessageController()
 
-    io.WriteString(w, "My server: " + r.URL.String())
-}
+    router.POST("/", mc.SendMessage)
 
-func hello(w http.ResponseWriter, r *http.Request) {
-    io.WriteString(w, "Hello world!")
-}
-
-func (*App) setRoutes() {
-    mux = make(map[string]func(http.ResponseWriter, *http.Request))
-    mux["/"] = hello
+    app.Server.Handler = router
 }

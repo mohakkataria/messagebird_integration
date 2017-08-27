@@ -10,9 +10,6 @@ var (
 	WebApp *App
 )
 
-type myHandler struct{}
-
-
 func init() {
 	// create application
     WebApp = NewApp()
@@ -40,7 +37,6 @@ func (app *App) Run() {
 
 	app.Server.ReadTimeout = time.Duration(5) * time.Second
 	app.Server.WriteTimeout = time.Duration(5) * time.Second
-    app.Server.Handler = &myHandler{}
 
     go func() {
         app.Server.Addr = addr
