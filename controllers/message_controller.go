@@ -10,6 +10,7 @@ import (
     "github.com/mohakkataria/messagebird_integration/models"
     "strings"
     "strconv"
+    "github.com/mohakkataria/messagebird_integration/message_bird"
 )
 
 type MessageController struct {
@@ -29,17 +30,19 @@ func (this MessageController) SendMessage(w http.ResponseWriter, r *http.Request
     m := map[string]interface{}{}
     err = json.Unmarshal(body, &m)
     if err != nil {
-        this.Write(w, nil, &error.Error{Code:400, Message:"Bad Request Json"})
+        this.Write(w, nil, &error.Error{Code:400, Message:error.BAD_JSON})
         return
     }
 
-    _, error := validateSendMessageAPIInputAndConvertToObject(m)
+    message, error := validateSendMessageAPIInputAndConvertToObject(m)
     if error != nil {
         this.Write(w, nil, error)
         return
     }
+    message_bird.QueueMessage(message)
 
-    this.Write(w, m, nil)
+    response := map[string]interface{}{"status":"pending", "message":"message enqueued"}
+    this.Write(w, response, nil)
 }
 
 func validateSendMessageAPIInputAndConvertToObject(input map[string]interface{}) (*models.Message, *error.Error) {
@@ -47,54 +50,54 @@ func validateSendMessageAPIInputAndConvertToObject(input map[string]interface{})
 
     recipients, ok := input["recipient"]
     if !ok {
-        return nil, &error.Error{Code:400, Message:"Missing Recipient"}
+        return nil, &error.Error{Code:400, Message:error.MISSING_RECIPIENT_INPUT}
     }
 
-    recipientsInteger := []int64{}
+    recipientsStringSlice := []string{}
     if util.IsString(recipients) {
         recipientsString := strings.Split(strings.TrimSpace(recipients.(string)), ",")
         for _, recipientString := range recipientsString {
-            i, e := strconv.Atoi(strings.TrimSpace(recipientString))
+            _, e := strconv.Atoi(strings.TrimSpace(recipientString))
             if e != nil {
-                return nil, &error.Error{Code:400, Message:"Bad Recipient Input"}
+                return nil, &error.Error{Code:400, Message:error.BAD_RECIPIENT_INPUT}
             } else {
-                recipientsInteger = append(recipientsInteger, int64(i))
+                recipientsStringSlice = append(recipientsStringSlice, recipientString)
             }
         }
     } else if (util.IsFloat64(recipients)) {
-        recipientsInteger = append(recipientsInteger, int64(recipients.(float64)))
+        recipientsStringSlice = append(recipientsStringSlice, strconv.Itoa(int(recipients.(float64))))
     } else {
-        return nil, &error.Error{Code:400, Message:"Bad Recipient Input"}
+        return nil, &error.Error{Code:400, Message:error.BAD_RECIPIENT_INPUT}
     }
-    message.Recipients = recipientsInteger
+    message.Recipients = recipientsStringSlice
 
     originator, ok := input["originator"]
     if !ok {
-        return nil, &error.Error{Code:400, Message:"Missing Originator"}
+        return nil, &error.Error{Code:400, Message:error.MISSING_ORIGINATOR_INPUT}
     }
     if util.IsString(originator) {
         originatorString := strings.TrimSpace(originator.(string))
         if util.IsAlphanumeric(originatorString) {
             if len(originatorString) > 11 {
-                return nil, &error.Error{Code:400, Message:"Alphanumeric Originator should be less than 11 characters"}
+                return nil, &error.Error{Code:400, Message:error.ALPHANUMERIC_LENGTH_ORIGINATOR_ERROR}
             }
             message.Originator = originatorString
+        } else {
+            return nil, &error.Error{Code:400, Message:error.BAD_ORIGINATOR_INPUT}
         }
-        return nil, &error.Error{Code:400, Message:"Bad Originator input"}
-
     } else if util.IsFloat64(originator) {
         i := int(originator.(float64))
         if (i < 0) {
-            return nil, &error.Error{Code:400, Message:"Bad Originator Input as it cannot be a number less than 0"}
+            return nil, &error.Error{Code:400, Message:error.NUMERIC_ORIGINATOR_ERROR}
         }
         message.Originator = strconv.Itoa(i)
     } else {
-        return nil, &error.Error{Code:400, Message:"Bad Originator input"}
+        return nil, &error.Error{Code:400, Message:error.BAD_ORIGINATOR_INPUT}
     }
 
     messageBody, ok := input["message"]
     if !ok {
-        return nil, &error.Error{Code:400, Message:"Missing Message Body"}
+        return nil, &error.Error{Code:400, Message:error.MISSING_MESSAGE_BODY}
     }
     if util.IsString(messageBody) {
         message.Message = messageBody.(string)
@@ -104,7 +107,7 @@ func validateSendMessageAPIInputAndConvertToObject(input map[string]interface{})
             message.Encoding = models.NORMAL
         }
     } else {
-        return nil, &error.Error{Code:400, Message:"Bad Message Body"}
+        return nil, &error.Error{Code:400, Message:error.BAD_MESSAGE_INPUT}
     }
 
     return &message, nil

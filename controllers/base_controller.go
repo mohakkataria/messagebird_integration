@@ -21,9 +21,7 @@ func (this BaseController) Write(w http.ResponseWriter, data interface{}, err *e
         return
     }
 
-    uj, err1 := json.Marshal(data)
-    fmt.Println(err1)
-    fmt.Println(err)
+    uj, _ := json.Marshal(data)
     w.WriteHeader(200)
     fmt.Fprintf(w, "%s", uj)
 }
