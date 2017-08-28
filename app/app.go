@@ -12,45 +12,44 @@ var (
 
 func init() {
 	// create application
-    WebApp = NewApp()
+	WebApp = NewApp()
 }
 
 // App defines application with a new PatternServeMux.
 type App struct {
-	Server   *http.Server
+	Server *http.Server
 }
 
 // NewApp returns a new application.
 func NewApp() *App {
 	app := &App{Server: &http.Server{}}
-    app.setRoutes()
+	app.setRoutes()
 	return app
 }
 
 // Run application.
 func (app *App) Run() {
-    addr := ":8080"
+	addr := ":8080"
 
-    var (
-        endRunning = make(chan bool, 1)
-    )
+	var (
+		endRunning = make(chan bool, 1)
+	)
 
 	app.Server.ReadTimeout = time.Duration(5) * time.Second
 	app.Server.WriteTimeout = time.Duration(5) * time.Second
 
-    go func() {
-        app.Server.Addr = addr
-        if err := app.Server.ListenAndServe(); err != nil {
-            time.Sleep(100 * time.Microsecond)
-            endRunning <- true
-        }
+	go func() {
+		app.Server.Addr = addr
+		if err := app.Server.ListenAndServe(); err != nil {
+			time.Sleep(100 * time.Microsecond)
+			endRunning <- true
+		}
 
-    }()
+	}()
 
 	<-endRunning
 }
 
 func Start() {
-    WebApp.Run()
+	WebApp.Run()
 }
-
