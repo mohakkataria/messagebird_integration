@@ -8,6 +8,7 @@ import (
 	"github.com/mohakkataria/messagebird_integration/models"
 	"github.com/mohakkataria/messagebird_integration/util"
 	"time"
+	"github.com/spf13/viper"
 )
 
 // sendSingleMessageRequests channel is used hold the requests to be sent
@@ -25,8 +26,6 @@ const (
 	MAX_MSG_SIZE_UNICODE                   = 603
 	MAX_SINGLE_MSG_SEGMENT_SIZE_UNICODE    = 70
 	MAX_MULTIPART_MSG_SEGMENT_SIZE_UNICODE = 67
-	API_KEY                                = "uaFwgOSlaIeUabmxP8Ou6lz9E"
-	API_RATE_LIMIT                         = 1
 )
 
 // QueueMessage is exposed to outside the package for the input Message object to be enqueued
@@ -142,11 +141,13 @@ func sendSingleMessage(message models.SplitMessage) {
 // InitializeAPIHits initializes the required channel for send requests
 // and the message bird client to be used. Also we initialize a ticker of 1 second
 // to implement the Rate Limit as Mentioned. As discussed, we are not using a Redis Based approach
-// and this will only be limited to this app instance
+// and this will only be limited to this app instance. So every 1 second,
+// as defined in the config, we check if there is a request to process
+// else we wait another second
 func InitializeAPIHits() {
 	sendSingleMessageRequests = make(chan models.SplitMessage)
-	messageBirdClient = messagebird.New(API_KEY)
-	rate := time.Second / API_RATE_LIMIT
+	messageBirdClient = messagebird.New(viper.GetString("apiKey"))
+	rate := time.Second / time.Duration(viper.Get("apiRateLimit").(float64))
 	throttle := time.Tick(rate)
 	fmt.Println("+1")
 	go func() {

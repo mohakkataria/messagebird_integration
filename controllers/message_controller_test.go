@@ -8,6 +8,8 @@ import (
     "strings"
     "github.com/mohakkataria/messagebird_integration/message_bird"
     "reflect"
+    "github.com/spf13/viper"
+    "fmt"
 )
 
 func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
@@ -119,5 +121,13 @@ func TestNewMessageController(t *testing.T) {
     mc1 := NewMessageController()
     if !reflect.DeepEqual(mc1, mc) {
         t.Errorf("Test failed, expected: '%s', got:  '%s'", mc1, mc)
+    }
+}
+
+func init() {
+    viper.SetConfigFile("./../config.json")
+    err := viper.ReadInConfig()
+    if err != nil {
+        fmt.Println("No configuration file loaded")
     }
 }
