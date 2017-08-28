@@ -1,3 +1,4 @@
+// Package models contains the models and associated methods if any for Messages
 package models
 
 import "unicode/utf8"
@@ -16,18 +17,18 @@ type (
     // Message struct model is for description as defined in the problem statement
     // {"recipient":31612345678,"originator":"MessageBird","message":"This is a test message."}
     Message struct {
-        Recipients []string
+        Recipients  []string
         Originator  string
-        Message string
-        Encoding Encoding
+        MessageBody string
+        Encoding    Encoding
     }
 
     SplitMessage struct {
-        Recipients []string
-        Originator  string
-        Message string
-        DataCoding string
-        UDH string
+        Recipients       []string
+        Originator       string
+        MessageBodyChunk string
+        DataCoding       string
+        UDH              string
     }
 )
 
@@ -37,9 +38,9 @@ func (this Message) IsEncodingNormal() bool {
 
 func (this Message) GetMessagebodyLength() int {
     if !this.IsEncodingNormal() {
-        return utf8.RuneCountInString(this.Message)
+        return utf8.RuneCountInString(this.MessageBody)
     }
-    return len(this.Message)
+    return len(this.MessageBody)
 }
 
 func (this Message) GetSplitMessageWithOutBodyFromMessage() SplitMessage {

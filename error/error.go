@@ -1,6 +1,7 @@
 // Package error contains description of Custom Error type
 package error
 
+// Constants for different error strings used
 const (
     BAD_JSON = "Bad Request JSON Input"
     BAD_RECIPIENT_INPUT = "Bad Recipient Input"
@@ -13,6 +14,8 @@ const (
     BAD_MESSAGE_INPUT = "Bas Message Body Input"
 )
 
+
+// Error type is a description of the custom error type with code and message fields
 type Error struct {
     Code int
     Message string
