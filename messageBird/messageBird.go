@@ -134,14 +134,14 @@ func sendSingleMessage(message models.SplitMessage) {
 				fmt.Printf("Error: %#v\n", mbError)
 			}
 		}
+	} else {
+		fmt.Println("Message Sent : ", mbMessage)
 	}
-
 }
 
 // Initialize initializes the required channel for send requests
 // and the message bird client to be used.
 func Initialize() {
-	fmt.Println("mb")
 	sendSingleMessageRequests = make(chan models.SplitMessage)
 	messageBirdClient = messagebird.New(viper.GetString("apiKey"))
 }
