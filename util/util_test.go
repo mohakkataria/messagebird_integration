@@ -1,8 +1,8 @@
 package util
 
 import (
-	"testing"
 	"regexp"
+	"testing"
 )
 
 func TestConvertIntToHex(t *testing.T) {

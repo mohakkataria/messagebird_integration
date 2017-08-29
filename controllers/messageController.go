@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"github.com/mohakkataria/messagebird_integration/error"
+	"github.com/mohakkataria/messagebird_integration/messageBird"
 	"github.com/mohakkataria/messagebird_integration/models"
 	"github.com/mohakkataria/messagebird_integration/util"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
-	"github.com/mohakkataria/messagebird_integration/messageBird"
 )
 
 // MessageController is the controller used for Message related API calls.

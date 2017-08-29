@@ -1,59 +1,59 @@
 package messageBird
 
 import (
-    "testing"
-    "github.com/mohakkataria/messagebird_integration/models"
-    "github.com/spf13/viper"
-    "fmt"
+	"fmt"
+	"github.com/mohakkataria/messagebird_integration/models"
+	"github.com/spf13/viper"
+	"testing"
 )
 
 func TestQueueMessage(t *testing.T) {
-    msg := &models.Message{
-        Recipients:[]string{"123, 123"},
-        Originator:"MessageBird",
-        MessageBody:"test",
-    }
+	msg := &models.Message{
+		Recipients:  []string{"123, 123"},
+		Originator:  "MessageBird",
+		MessageBody: "test",
+	}
 
-    QueueMessage(msg)
+	QueueMessage(msg)
 
-    msg = &models.Message{
-        Recipients:[]string{"123, 123"},
-        Originator:"MessageBird",
-        MessageBody:"test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test ",
-    }
+	msg = &models.Message{
+		Recipients:  []string{"123, 123"},
+		Originator:  "MessageBird",
+		MessageBody: "test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test ",
+	}
 
-    QueueMessage(msg)
+	QueueMessage(msg)
 
-    msg = &models.Message{
-        Recipients:[]string{"123, 123"},
-        Originator:"MessageBird",
-        MessageBody:"日本語 ",
-    }
+	msg = &models.Message{
+		Recipients:  []string{"123, 123"},
+		Originator:  "MessageBird",
+		MessageBody: "日本語 ",
+	}
 
-    QueueMessage(msg)
+	QueueMessage(msg)
 
-    msg = &models.Message{
-        Recipients:[]string{"123, 123"},
-        Originator:"MessageBird",
-        MessageBody:"тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест ",
-    }
+	msg = &models.Message{
+		Recipients:  []string{"123, 123"},
+		Originator:  "MessageBird",
+		MessageBody: "тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест тестестестест ",
+	}
 
-    QueueMessage(msg)
+	QueueMessage(msg)
 
-    msg = &models.Message{
-        Recipients:[]string{"123, 123"},
-        Originator:"MessageBird",
-        MessageBody:"日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 ",
-    }
+	msg = &models.Message{
+		Recipients:  []string{"123, 123"},
+		Originator:  "MessageBird",
+		MessageBody: "日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 日本語 ",
+	}
 
-    QueueMessage(msg)
+	QueueMessage(msg)
 }
 
 func init() {
-    InitializeAPIHits()
-    viper.SetConfigFile("./../config.json")
-    err := viper.ReadInConfig()
-    if err != nil {
-        fmt.Println("No configuration file loaded")
-    }
+	InitializeAPIHits()
+	viper.SetConfigFile("./../config.json")
+	err := viper.ReadInConfig()
+	if err != nil {
+		fmt.Println("No configuration file loaded")
+	}
 }

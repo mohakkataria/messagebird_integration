@@ -7,8 +7,8 @@ import (
 	"github.com/messagebird/go-rest-api"
 	"github.com/mohakkataria/messagebird_integration/models"
 	"github.com/mohakkataria/messagebird_integration/util"
-	"time"
 	"github.com/spf13/viper"
+	"time"
 )
 
 // sendSingleMessageRequests channel is used hold the requests to be sent
@@ -20,11 +20,11 @@ var messageBirdClient *messagebird.Client
 
 // Constants for various message length restrictions and API
 const (
-	maxMsgSizePlain = 1377
-	maxSingleMsgSegmentSizePlain = 160
-	maxMultipartMsgSegmentSizePlain = 153
-	maxMsgSizeUnicode = 603
-	maxSingleMsgSegmentSizeUnicode = 70
+	maxMsgSizePlain                   = 1377
+	maxSingleMsgSegmentSizePlain      = 160
+	maxMultipartMsgSegmentSizePlain   = 153
+	maxMsgSizeUnicode                 = 603
+	maxSingleMsgSegmentSizeUnicode    = 70
 	maxMultipartMsgSegmentSizeUnicode = 67
 )
 

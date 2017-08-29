@@ -33,7 +33,6 @@ type (
 	}
 )
 
-
 // IsEncodingNormal is used to check where encoding of the Message is Normal or not
 func (m Message) IsEncodingNormal() bool {
 	return m.Encoding == NORMAL

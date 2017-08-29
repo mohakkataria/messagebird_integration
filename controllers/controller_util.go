@@ -24,4 +24,3 @@ func Write(w http.ResponseWriter, data interface{}, err *error.Error) {
 	w.WriteHeader(200)
 	fmt.Fprintf(w, "%s", uj)
 }
-

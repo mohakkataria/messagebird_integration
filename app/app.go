@@ -1,16 +1,15 @@
 package app
 
 import (
+	"github.com/spf13/viper"
 	"net/http"
 	"time"
-	"github.com/spf13/viper"
 )
 
 var (
 	// WebApp is an HTTP Application instance
 	WebApp *App
 )
-
 
 func init() {
 	WebApp = NewApp()
@@ -51,7 +50,6 @@ func (app *App) run() {
 
 	<-endRunning
 }
-
 
 // Start function is exported for other packages to call. It is called in main
 func Start() {
