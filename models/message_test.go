@@ -17,7 +17,7 @@ func TestMessage_GetMessagebodyLength(t *testing.T) {
     testMessage := Message{MessageBody:"test", Recipients:[]string{"12"}, Originator:"123", Encoding:NORMAL}
     actual := testMessage.GetMessagebodyLength()
     if actual != 4 {
-        t.Errorf("Test failed, length expected: '%s', got:  '%s'", "4", actual)
+        t.Errorf("Test failed, length expected: '%d', got:  '%d'", 4, actual)
     }
 }
 
@@ -40,6 +40,6 @@ func TestMessage_GetMessagebodyLength2(t *testing.T) {
     testMessage := Message{MessageBody:"test", Recipients:[]string{"12"}, Originator:"123", Encoding:UNICODE}
     actual := testMessage.GetMessagebodyLength()
     if actual != 4 {
-        t.Errorf("Test failed, length expected: '%s', got:  '%s'", "4", actual)
+        t.Errorf("Test failed, length expected: '%d', got:  '%d'", 4, actual)
     }
 }

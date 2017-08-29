@@ -19,7 +19,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e := validateSendMessageAPIInputAndConvertToObject(msg)
     if e != nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", nil, e.Message)
+        t.Errorf("Test failed, expected: nil, got:  '%s'", e.Message)
     }
 
     msgInput = []byte(`{"recipient":123,"originator":"asdasdasdasd","message" : "test"}`)
@@ -27,7 +27,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.alphanumericLengthOriginatorError, nil)
+        t.Errorf("Test failed, expected: '%s', got: nil", error.AlphanumericLengthOriginatorError)
     }
 
     msgInput = []byte(`{"recipient":"123","originator":"123","message" : "test"}`)
@@ -35,7 +35,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e != nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", nil, e.Message)
+        t.Errorf("Test failed, expected: nil, got:  '%s'", e.Message)
     }
 
     msgInput = []byte(`{"recipient":"123,123","originator":"asdasdasdasd","message" : "test"}`)
@@ -43,7 +43,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.AlphanumericLengthOriginatorError, nil)
+        t.Errorf("Test failed, expected: '%s', got:  nil", error.AlphanumericLengthOriginatorError)
     }
 
     msgInput = []byte(`{"recipient":"123,123","originator":"!!!","message" : "test"}`)
@@ -51,7 +51,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.BadOriginatorInput, nil)
+        t.Errorf("Test failed, expected: '%s', got:  nil", error.BadOriginatorInput)
     }
 
     msgInput = []byte(`{"recipient":"123,123","message" : "test"}`)
@@ -59,7 +59,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.MissingOriginatorInput, nil)
+        t.Errorf("Test failed, expected: '%s', got:  nil", error.MissingOriginatorInput)
     }
 
     msgInput = []byte(`{"originator":"!!!","message" : "test"}`)
@@ -67,7 +67,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.MissingRecipientInput, nil)
+        t.Errorf("Test failed, expected: '%s', got:  nil", error.MissingRecipientInput)
     }
 
     msgInput = []byte(`{"recipient":"123,123","originator":"!!!"}`)
@@ -75,7 +75,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.MissingMessageBody, nil)
+        t.Errorf("Test failed, expected: '%s', got:  nil", error.MissingMessageBody)
     }
 
     msgInput = []byte(`{"recipient":"123,123","originator":"123","message" : 123}`)
@@ -83,7 +83,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.BadMessageInput, nil)
+        t.Errorf("Test failed, expected: '%s', got: nil", error.BadMessageInput)
     }
 }
 
@@ -95,7 +95,7 @@ func TestMessageController_SendMessage(t *testing.T) {
     w := httptest.NewRecorder()
     mc.SendMessage(w, req, nil)
     if w.Code != 200 {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", 200, w.Code)
+        t.Errorf("Test failed, expected: '%d', got:  '%d'", 200, w.Code)
     }
 
     payload = `{"recipient":123,"originator":"!!","message" : "test"}`
@@ -103,7 +103,7 @@ func TestMessageController_SendMessage(t *testing.T) {
     w = httptest.NewRecorder()
     mc.SendMessage(w, req, nil)
     if w.Code != 400 {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", 400, w.Code)
+        t.Errorf("Test failed, expected: '%d', got:  '%d'", 400, w.Code)
     }
 }
 
@@ -113,7 +113,7 @@ func TestMessageController_SendMessage2(t *testing.T) {
     w := httptest.NewRecorder()
     mc.SendMessage(w, req, nil)
     if w.Code != 400 {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", 400, w.Code)
+        t.Errorf("Test failed, expected: '%d', got:  '%d'", 400, w.Code)
     }
 }
 
