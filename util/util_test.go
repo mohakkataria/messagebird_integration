@@ -17,13 +17,13 @@ func TestIsFloat64(t *testing.T) {
 	expected := true
 	actual := IsFloat64(123.12)
 	if actual != expected {
-		t.Errorf("Test failed, expected: '%s', got:  '%s'", actual, expected)
+		t.Errorf("Test failed, expected: '%t', got:  '%t'", actual, expected)
 	}
 
 	expected = false
 	actual = IsFloat64(123)
 	if actual != expected {
-		t.Errorf("Test failed, expected: '%s', got:  '%s'", actual, expected)
+		t.Errorf("Test failed, expected: '%t', got:  '%t'", actual, expected)
 	}
 }
 
@@ -31,13 +31,13 @@ func TestIsString(t *testing.T) {
 	expected := true
 	actual := IsString("1")
 	if actual != expected {
-		t.Errorf("Test failed, expected: '%s', got:  '%s'", actual, expected)
+		t.Errorf("Test failed, expected: '%t', got:  '%t'", actual, expected)
 	}
 
 	expected = false
 	actual = IsString(123)
 	if actual != expected {
-		t.Errorf("Test failed, expected: '%s', got:  '%s'", actual, expected)
+		t.Errorf("Test failed, expected: '%t', got:  '%t'", actual, expected)
 	}
 }
 
@@ -45,7 +45,7 @@ func TestIsUnicode(t *testing.T) {
 	expected := true
 	actual := IsUnicode("日本語")
 	if actual != expected {
-		t.Errorf("Test failed, expected: '%s', got:  '%s'", actual, expected)
+		t.Errorf("Test failed, expected: '%t', got:  '%t'", actual, expected)
 	}
 }
 
