@@ -139,25 +139,31 @@ func sendSingleMessage(message models.SplitMessage) {
 }
 
 // InitializeAPIHits initializes the required channel for send requests
-// and the message bird client to be used. Also we initialize a ticker of 1 second
-// to implement the Rate Limit as Mentioned. As discussed, we are not using a Redis Based approach
-// and this will only be limited to this app instance. So every 1 second,
-// as defined in the config, we check if there is a request to process
-// else we wait another second
-func InitializeAPIHits() {
+// and the message bird client to be used.
+func init() {
 	sendSingleMessageRequests = make(chan models.SplitMessage)
 	messageBirdClient = messagebird.New(viper.GetString("apiKey"))
+}
+
+// getThrottler return a time Ticker with specified Rate. We initialize a ticker of 1 second
+// to implement the Rate Limit as Mentioned. As discussed, we are not using a Redis Based approach
+// and this will only be limited to this app instance.
+func getThrottler() <-chan time.Time {
 	rate := time.Second / time.Duration(viper.Get("apiRateLimit").(float64))
-	throttle := time.Tick(rate)
-	fmt.Println("+1")
+	return time.Tick(rate)
+}
+
+// StartChannelConsumer starts receiving from channel the SplitMessages to be sent Send Requests.
+// For every tick, we check if there is a request to process else we wait for another tick
+func StartChannelConsumer() {
+	throttle := getThrottler()
 	go func() {
 		for {
 			<-throttle
-			fmt.Println("+1")
 			select {
 			case req := <-sendSingleMessageRequests:
 				fmt.Println("sending message", req)
-				sendSingleMessage(req)
+				go sendSingleMessage(req)
 				fmt.Println("sent message", req)
 			default:
 				fmt.Println("no message sent")

@@ -13,7 +13,7 @@ Example payloads
    
 * Validates the payload before queueing it to golang channel (being used as a FIFO queue). Other alternatives could have been using Redis as the con of this method is that it can only enable per process rate limiting.
 
-* A go routine pops a message off the channel and proceeds onto sending the message via MessageBird SDK. We limit the number of requests made to the MessageBird per second to 1 using golang time ticker. Every second a message is processed for sending.
+* A go routine takes a message off the channel and proceeds onto sending the message via MessageBird SDK. We limit the number of requests made to the MessageBird per second to 1 using golang time ticker. Every second a message is processed for sending. Another approach to this would have been to save a last sent timestamp, and always compare before sending
 
 * When an incoming message content/body is longer than 160 chars (70 in case of unicode), we split it into multiple parts (known as concatenated SMS) by setting the appropriate UDH (User Data Header). The rate limit specified above also applies to each segment of the SMS and only 1 segment is sent per second.
 

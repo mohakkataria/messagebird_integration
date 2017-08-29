@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/mohakkataria/messagebird_integration/error"
 	"github.com/mohakkataria/messagebird_integration/messageBird"
-	"github.com/mohakkataria/messagebird_integration/message_bird"
 	"github.com/spf13/viper"
 	"net/http/httptest"
 	"reflect"
@@ -88,7 +87,6 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
 }
 
 func TestMessageController_SendMessage(t *testing.T) {
-	messageBird.InitializeAPIHits()
 	mc := MessageController{}
 	payload := `{"recipient":123,"originator":123,"message" : "test"}`
 	req := httptest.NewRequest("POST", "/", strings.NewReader(payload))
@@ -131,4 +129,5 @@ func init() {
 	if err != nil {
 		fmt.Println("No configuration file loaded")
 	}
+	messageBird.StartChannelConsumer()
 }

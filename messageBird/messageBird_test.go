@@ -50,10 +50,11 @@ func TestQueueMessage(t *testing.T) {
 }
 
 func init() {
-	InitializeAPIHits()
+
 	viper.SetConfigFile("./../config.json")
 	err := viper.ReadInConfig()
 	if err != nil {
 		fmt.Println("No configuration file loaded")
 	}
+	StartChannelConsumer()
 }
