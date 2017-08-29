@@ -30,3 +30,4 @@ Example payloads
 * Log sent messages somewhere to have some accountability.
 * Log API errors in a better way.
 * Increase Test Coverage.
+* Remove config from code itself. Configurations should ideally be kep separate, as this was a small assignment, hence including the config json with repository itself.

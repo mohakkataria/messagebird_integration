@@ -56,5 +56,6 @@ func init() {
 	if err != nil {
 		fmt.Println("No configuration file loaded")
 	}
+	Initialize()
 	StartChannelConsumer()
 }

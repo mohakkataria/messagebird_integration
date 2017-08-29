@@ -12,10 +12,12 @@ func main() {
 }
 
 func init() {
+	fmt.Println("ma")
 	viper.SetConfigFile("./config.json")
 	err := viper.ReadInConfig()
 	if err != nil {
 		fmt.Println("No configuration file loaded")
 	}
+	messageBird.Initialize()
 	messageBird.StartChannelConsumer()
 }

@@ -138,9 +138,10 @@ func sendSingleMessage(message models.SplitMessage) {
 
 }
 
-// InitializeAPIHits initializes the required channel for send requests
+// Initialize initializes the required channel for send requests
 // and the message bird client to be used.
-func init() {
+func Initialize() {
+	fmt.Println("mb")
 	sendSingleMessageRequests = make(chan models.SplitMessage)
 	messageBirdClient = messagebird.New(viper.GetString("apiKey"))
 }
