@@ -14,7 +14,7 @@ func main() {
 	if err != nil {
 		fmt.Println("No configuration file loaded")
 	}
-	message_bird.InitializeAPIHits()
+	messageBird.InitializeAPIHits()
 	app.Start()
 
 }

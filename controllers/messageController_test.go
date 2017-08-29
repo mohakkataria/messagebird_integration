@@ -10,6 +10,7 @@ import (
     "reflect"
     "github.com/spf13/viper"
     "fmt"
+    "github.com/mohakkataria/messagebird_integration/messageBird"
 )
 
 func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
@@ -26,7 +27,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.ALPHANUMERIC_LENGTH_ORIGINATOR_ERROR, nil)
+        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.alphanumericLengthOriginatorError, nil)
     }
 
     msgInput = []byte(`{"recipient":"123","originator":"123","message" : "test"}`)
@@ -42,7 +43,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.ALPHANUMERIC_LENGTH_ORIGINATOR_ERROR, nil)
+        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.AlphanumericLengthOriginatorError, nil)
     }
 
     msgInput = []byte(`{"recipient":"123,123","originator":"!!!","message" : "test"}`)
@@ -50,7 +51,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.BAD_ORIGINATOR_INPUT, nil)
+        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.BadOriginatorInput, nil)
     }
 
     msgInput = []byte(`{"recipient":"123,123","message" : "test"}`)
@@ -58,7 +59,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.MISSING_ORIGINATOR_INPUT, nil)
+        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.MissingOriginatorInput, nil)
     }
 
     msgInput = []byte(`{"originator":"!!!","message" : "test"}`)
@@ -66,7 +67,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.MISSING_RECIPIENT_INPUT, nil)
+        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.MissingRecipientInput, nil)
     }
 
     msgInput = []byte(`{"recipient":"123,123","originator":"!!!"}`)
@@ -74,7 +75,7 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.MISSING_MESSAGE_BODY, nil)
+        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.MissingMessageBody, nil)
     }
 
     msgInput = []byte(`{"recipient":"123,123","originator":"123","message" : 123}`)
@@ -82,12 +83,12 @@ func Test_validateSendMessageAPIInputAndConvertToObject(t *testing.T) {
     json.Unmarshal(msgInput, &msg)
     _, e = validateSendMessageAPIInputAndConvertToObject(msg)
     if e == nil {
-        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.BAD_MESSAGE_INPUT, nil)
+        t.Errorf("Test failed, expected: '%s', got:  '%s'", error.BadMessageInput, nil)
     }
 }
 
 func TestMessageController_SendMessage(t *testing.T) {
-    message_bird.InitializeAPIHits()
+    messageBird.InitializeAPIHits()
     mc := MessageController{}
     payload := `{"recipient":123,"originator":123,"message" : "test"}`
     req := httptest.NewRequest("POST", "/", strings.NewReader(payload))

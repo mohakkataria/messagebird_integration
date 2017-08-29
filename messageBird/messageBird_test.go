@@ -1,4 +1,4 @@
-package message_bird
+package messageBird
 
 import (
     "testing"

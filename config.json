@@ -1,0 +1,8 @@
+{
+  "apiKey" : "uaFwgOSlaIeUabmxP8Ou6lz9E",
+  "apiRateLimit" : 1,
+  "addressInfo" : {
+    "host" : "0.0.0.0",
+    "port" : "8080"
+  }
+}

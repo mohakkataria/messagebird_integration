@@ -5,18 +5,17 @@ import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"github.com/mohakkataria/messagebird_integration/error"
-	"github.com/mohakkataria/messagebird_integration/message_bird"
 	"github.com/mohakkataria/messagebird_integration/models"
 	"github.com/mohakkataria/messagebird_integration/util"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
+	"github.com/mohakkataria/messagebird_integration/messageBird"
 )
 
 // MessageController is the controller used for Message related API calls.
 type MessageController struct {
-	BaseController
 }
 
 // NewMessageController returns a pointer to instance of MessageController
@@ -26,7 +25,7 @@ func NewMessageController() *MessageController {
 
 // SendMessage accepts the json input, validates the input and Delegates it to message_bird package for enqueuing it
 // and sending it upon Rate Limit satisfaction
-func (this MessageController) SendMessage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func (mc MessageController) SendMessage(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	// Read the body
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -38,21 +37,21 @@ func (this MessageController) SendMessage(w http.ResponseWriter, r *http.Request
 	err = json.Unmarshal(body, &m)
 	if err != nil {
 		fmt.Println(err)
-		this.Write(w, nil, &error.Error{Code: 400, Message: error.BAD_JSON})
+		Write(w, nil, &error.Error{Code: 400, Message: error.BadJSON})
 		return
 	}
 
 	// validate and get a models.Message object
 	message, error := validateSendMessageAPIInputAndConvertToObject(m)
 	if error != nil {
-		this.Write(w, nil, error)
+		Write(w, nil, error)
 		return
 	}
 	// enqueue the models.Message object and delegates the responsibility
-	message_bird.QueueMessage(message)
+	messageBird.QueueMessage(message)
 	// since it enqueues, we pass on a pending status to the user
 	response := map[string]interface{}{"status": "pending", "message": "message enqueued"}
-	this.Write(w, response, nil)
+	Write(w, response, nil)
 }
 
 // validateSendMessageAPIInputAndConvertToObject takes into account all input related validations
@@ -63,7 +62,7 @@ func validateSendMessageAPIInputAndConvertToObject(input map[string]interface{})
 	// check if recipient exists
 	recipients, ok := input["recipient"]
 	if !ok {
-		return nil, &error.Error{Code: 400, Message: error.MISSING_RECIPIENT_INPUT}
+		return nil, &error.Error{Code: 400, Message: error.MissingRecipientInput}
 	}
 
 	recipientsStringSlice := []string{}
@@ -74,11 +73,10 @@ func validateSendMessageAPIInputAndConvertToObject(input map[string]interface{})
 		for _, recipientString := range recipientsString {
 			_, e := strconv.Atoi(strings.TrimSpace(recipientString))
 			if e != nil {
-				return nil, &error.Error{Code: 400, Message: error.BAD_RECIPIENT_INPUT}
-			} else {
-				// append recipients to a string slice
-				recipientsStringSlice = append(recipientsStringSlice, recipientString)
+				return nil, &error.Error{Code: 400, Message: error.BadRecipientInput}
 			}
+			// append recipients to a string slice
+			recipientsStringSlice = append(recipientsStringSlice, recipientString)
 		}
 	} else if util.IsFloat64(recipients) {
 		// if it is a single number, then convert it to string, and append it to slice
@@ -91,7 +89,7 @@ func validateSendMessageAPIInputAndConvertToObject(input map[string]interface{})
 	// check if originator exists
 	originator, ok := input["originator"]
 	if !ok {
-		return nil, &error.Error{Code: 400, Message: error.MISSING_ORIGINATOR_INPUT}
+		return nil, &error.Error{Code: 400, Message: error.MissingOriginatorInput}
 	}
 	if util.IsString(originator) {
 		// trim spaces if any
@@ -99,17 +97,17 @@ func validateSendMessageAPIInputAndConvertToObject(input map[string]interface{})
 		if util.IsAlphanumeric(originatorString) {
 			// check if length of alphanumeric originator is less than 11
 			if len(originatorString) > 11 {
-				return nil, &error.Error{Code: 400, Message: error.ALPHANUMERIC_LENGTH_ORIGINATOR_ERROR}
+				return nil, &error.Error{Code: 400, Message: error.AlphanumericLengthOriginatorError}
 			}
 			message.Originator = originatorString
 		} else {
-			return nil, &error.Error{Code: 400, Message: error.BAD_ORIGINATOR_INPUT}
+			return nil, &error.Error{Code: 400, Message: error.BadOriginatorInput}
 		}
 	} else if util.IsFloat64(originator) {
 		// if it is a single number, check it is not less than 0
 		i := int(originator.(float64))
 		if i < 0 {
-			return nil, &error.Error{Code: 400, Message: error.NUMERIC_ORIGINATOR_ERROR}
+			return nil, &error.Error{Code: 400, Message: error.NumericOriginatorInput}
 		}
 		message.Originator = strconv.Itoa(i)
 	} /*else {
@@ -119,7 +117,7 @@ func validateSendMessageAPIInputAndConvertToObject(input map[string]interface{})
 	// check if message body exists
 	messageBody, ok := input["message"]
 	if !ok {
-		return nil, &error.Error{Code: 400, Message: error.MISSING_MESSAGE_BODY}
+		return nil, &error.Error{Code: 400, Message: error.MissingMessageBody}
 	}
 	if util.IsString(messageBody) {
 		// check the encoding of the message body
@@ -130,7 +128,7 @@ func validateSendMessageAPIInputAndConvertToObject(input map[string]interface{})
 			message.Encoding = models.NORMAL
 		}
 	} else {
-		return nil, &error.Error{Code: 400, Message: error.BAD_MESSAGE_INPUT}
+		return nil, &error.Error{Code: 400, Message: error.BadMessageInput}
 	}
 
 	return &message, nil

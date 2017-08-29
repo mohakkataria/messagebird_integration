@@ -3,33 +3,35 @@ package app
 import (
 	"net/http"
 	"time"
+	"github.com/spf13/viper"
 )
 
 var (
-	// App is an application instance
+	// WebApp is an HTTP Application instance
 	WebApp *App
 )
 
+
 func init() {
-	// create application
 	WebApp = NewApp()
 }
 
-// App defines application with a new PatternServeMux.
+// App defines http server application
 type App struct {
 	Server *http.Server
 }
 
-// NewApp returns a new application.
+// NewApp returns a new application instance
 func NewApp() *App {
 	app := &App{Server: &http.Server{}}
 	app.setRoutes()
 	return app
 }
 
-// Run application.
-func (app *App) Run() {
-	addr := ":8080"
+// Run function, runs the HTTP Server
+func (app *App) run() {
+	addressInfo := viper.GetStringMapString("addressInfo")
+	addr := addressInfo["host"] + ":" + addressInfo["port"]
 
 	var (
 		endRunning = make(chan bool, 1)
@@ -50,6 +52,8 @@ func (app *App) Run() {
 	<-endRunning
 }
 
+
+// Start function is exported for other packages to call. It is called in main
 func Start() {
-	WebApp.Run()
+	WebApp.run()
 }

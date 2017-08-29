@@ -4,9 +4,9 @@ package models
 import "unicode/utf8"
 
 const (
-	// Normal Encoding representation in Enum
+	// NORMAL Encoding representation in Enum
 	NORMAL Encoding = iota // 0
-	// Unicode Encoding representation in Enum
+	// UNICODE Encoding representation in Enum
 	UNICODE // 1
 )
 
@@ -14,7 +14,7 @@ type (
 	// Encoding as Enum
 	Encoding int
 
-	// Message struct model is for description as defined in the problem statement
+	// Message struct model is for description of input as defined in the problem statement
 	// {"recipient":31612345678,"originator":"MessageBird","message":"This is a test message."}
 	Message struct {
 		Recipients  []string
@@ -23,6 +23,7 @@ type (
 		Encoding    Encoding
 	}
 
+	// SplitMessage struct model is for Concatenated SMS used in queueing the requests before sending them
 	SplitMessage struct {
 		Recipients       []string
 		Originator       string
@@ -32,22 +33,26 @@ type (
 	}
 )
 
-func (this Message) IsEncodingNormal() bool {
-	return this.Encoding == NORMAL
+
+// IsEncodingNormal is used to check where encoding of the Message is Normal or not
+func (m Message) IsEncodingNormal() bool {
+	return m.Encoding == NORMAL
 }
 
-func (this Message) GetMessagebodyLength() int {
-	if !this.IsEncodingNormal() {
-		return utf8.RuneCountInString(this.MessageBody)
+// GetMessagebodyLength returns the body length regardless of encoding.
+func (m Message) GetMessagebodyLength() int {
+	if !m.IsEncodingNormal() {
+		return utf8.RuneCountInString(m.MessageBody)
 	}
-	return len(this.MessageBody)
+	return len(m.MessageBody)
 }
 
-func (this Message) GetSplitMessageWithOutBodyFromMessage() SplitMessage {
+// GetSplitMessageWithOutBodyFromMessage returns a SplitMessage from Message with metadata of udh.
+func (m Message) GetSplitMessageWithOutBodyFromMessage() SplitMessage {
 	splitMessage := SplitMessage{}
-	splitMessage.Recipients = this.Recipients
-	splitMessage.Originator = this.Originator
-	if this.IsEncodingNormal() {
+	splitMessage.Recipients = m.Recipients
+	splitMessage.Originator = m.Originator
+	if m.IsEncodingNormal() {
 		splitMessage.DataCoding = "plain"
 	} else {
 		splitMessage.DataCoding = "unicode"

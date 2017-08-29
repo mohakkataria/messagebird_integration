@@ -1,6 +1,6 @@
-// Package message_bird contains the functionality to interact with
+// Package messageBird contains the functionality to interact with
 // MessageBird SDK
-package message_bird
+package messageBird
 
 import (
 	"fmt"
@@ -20,12 +20,12 @@ var messageBirdClient *messagebird.Client
 
 // Constants for various message length restrictions and API
 const (
-	MAX_MSG_SIZE_PLAIN                     = 1377
-	MAX_SINGLE_MSG_SEGMENT_SIZE_PLAIN      = 160
-	MAX_MULTIPART_MSG_SEGMENT_SIZE_PLAIN   = 153
-	MAX_MSG_SIZE_UNICODE                   = 603
-	MAX_SINGLE_MSG_SEGMENT_SIZE_UNICODE    = 70
-	MAX_MULTIPART_MSG_SEGMENT_SIZE_UNICODE = 67
+	maxMsgSizePlain = 1377
+	maxSingleMsgSegmentSizePlain = 160
+	maxMultipartMsgSegmentSizePlain = 153
+	maxMsgSizeUnicode = 603
+	maxSingleMsgSegmentSizeUnicode = 70
+	maxMultipartMsgSegmentSizeUnicode = 67
 )
 
 // QueueMessage is exposed to outside the package for the input Message object to be enqueued
@@ -39,32 +39,32 @@ func QueueMessage(message *models.Message) error {
 	// Here we  are making sure that the number of characters are as per specification.
 	// Segmenting logic is also handled by dividing the message into chunks if required.
 	if !message.IsEncodingNormal() {
-		if messageBodyLength < MAX_SINGLE_MSG_SEGMENT_SIZE_UNICODE {
+		if messageBodyLength < maxSingleMsgSegmentSizeUnicode {
 			splitMessage.MessageBodyChunk = message.MessageBody
 			queueSplitMessage(splitMessage)
 		} else {
 			// Truncate message if length is more than the allowed length
-			if messageBodyLength > MAX_MSG_SIZE_UNICODE {
-				message.MessageBody = string([]rune(message.MessageBody)[:MAX_MSG_SIZE_UNICODE])
+			if messageBodyLength > maxMsgSizeUnicode {
+				message.MessageBody = string([]rune(message.MessageBody)[:maxMsgSizeUnicode])
 			}
 
 			// Get chunks
-			messages := getMessageChunks(MAX_MULTIPART_MSG_SEGMENT_SIZE_UNICODE, message.MessageBody)
+			messages := getMessageChunks(maxMultipartMsgSegmentSizeUnicode, message.MessageBody)
 			enqueueConcatenatedSMS(splitMessage, messages)
 		}
 	} else {
-		if messageBodyLength < MAX_SINGLE_MSG_SEGMENT_SIZE_PLAIN {
+		if messageBodyLength < maxSingleMsgSegmentSizePlain {
 			splitMessage.MessageBodyChunk = message.MessageBody
 			fmt.Println(splitMessage)
 			queueSplitMessage(splitMessage)
 		} else {
 			// if message exceeds maximum size limit for plain messages, we only send the maximum allowed chars.
-			if messageBodyLength > MAX_MSG_SIZE_PLAIN {
-				message.MessageBody = message.MessageBody[:MAX_MULTIPART_MSG_SEGMENT_SIZE_PLAIN]
+			if messageBodyLength > maxMsgSizePlain {
+				message.MessageBody = message.MessageBody[:maxMultipartMsgSegmentSizePlain]
 			}
 
 			// Get chunks
-			messages := getMessageChunks(MAX_MULTIPART_MSG_SEGMENT_SIZE_PLAIN, message.MessageBody)
+			messages := getMessageChunks(maxMultipartMsgSegmentSizePlain, message.MessageBody)
 			enqueueConcatenatedSMS(splitMessage, messages)
 		}
 	}
